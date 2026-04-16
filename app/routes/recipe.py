@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, redirect, url_for, abort
+from flask import Blueprint, request, render_template, redirect, url_for, abort, flash
+from app.models.recipe import Recipe
 
 recipe_bp = Blueprint('recipe', __name__)
 
@@ -8,14 +9,16 @@ def index():
     列出所有食譜。
     若有 ?q= 參數則篩選標題與食材。
     """
-    pass
+    query = request.args.get('q')
+    recipes = Recipe.get_all(query)
+    return render_template('recipes/index.html', recipes=recipes, query=query)
 
 @recipe_bp.route('/recipes/new')
 def new_recipe():
     """
     顯示新增食譜表單頁面。
     """
-    pass
+    return render_template('recipes/form.html', recipe=None)
 
 @recipe_bp.route('/recipes', methods=['POST'])
 def create_recipe():
@@ -23,21 +26,41 @@ def create_recipe():
     處理新增食譜請求。
     接收表單資料，寫入 DB，完成後導回首頁。
     """
-    pass
+    data = {
+        'title': request.form.get('title'),
+        'description': request.form.get('description'),
+        'ingredients': request.form.get('ingredients'),
+        'steps': request.form.get('steps')
+    }
+    
+    # 基本驗證
+    if not data['title'] or not data['ingredients'] or not data['steps']:
+        flash('請填寫所有必填欄位 (標題、食材、步驟)')
+        return render_template('recipes/form.html', recipe=data)
+        
+    Recipe.create(data)
+    flash('食譜已成功新增！')
+    return redirect(url_for('recipe.index'))
 
 @recipe_bp.route('/recipes/<int:id>')
 def show_recipe(id):
     """
     顯示單一食譜的詳細資料。
     """
-    pass
+    recipe = Recipe.get_by_id(id)
+    if not recipe:
+        abort(404)
+    return render_template('recipes/show.html', recipe=recipe)
 
 @recipe_bp.route('/recipes/<int:id>/edit')
 def edit_recipe(id):
     """
     顯示修改食譜的表單頁面，將原資料填入表單中。
     """
-    pass
+    recipe = Recipe.get_by_id(id)
+    if not recipe:
+        abort(404)
+    return render_template('recipes/form.html', recipe=recipe)
 
 @recipe_bp.route('/recipes/<int:id>/update', methods=['POST'])
 def update_recipe(id):
@@ -45,7 +68,22 @@ def update_recipe(id):
     處裡食譜修改請求並寫入。
     更新後導回食譜明細頁。
     """
-    pass
+    data = {
+        'title': request.form.get('title'),
+        'description': request.form.get('description'),
+        'ingredients': request.form.get('ingredients'),
+        'steps': request.form.get('steps')
+    }
+    
+    if not data['title'] or not data['ingredients'] or not data['steps']:
+        flash('請填寫所有必填欄位')
+        return render_template('recipes/form.html', recipe={**data, 'id': id})
+        
+    if Recipe.update(id, data):
+        flash('食譜已更新！')
+        return redirect(url_for('recipe.show_recipe', id=id))
+    else:
+        abort(404)
 
 @recipe_bp.route('/recipes/<int:id>/delete', methods=['POST'])
 def delete_recipe(id):
@@ -53,4 +91,7 @@ def delete_recipe(id):
     刪除指定食譜。
     刪除後導向回首頁。
     """
-    pass
+    if Recipe.delete(id):
+        flash('食譜已刪除。')
+    return redirect(url_for('recipe.index'))
+

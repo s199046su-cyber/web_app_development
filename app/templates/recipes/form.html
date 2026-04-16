@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if recipe and recipe.id %}編輯食譜{% else %}新增食譜{% endif %} - 食譜管理系統
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <h2 class="fw-bold mb-4">
+                    {% if recipe and recipe.id %}
+                        🖊️ 編輯食譜：{{ recipe.title }}
+                    {% else %}
+                        ✨ 新增食譜
+                    {% endif %}
+                </h2>
+                
+                <form action="{% if recipe and recipe.id %}{{ url_for('recipe.update_recipe', id=recipe.id) }}{% else %}{{ url_for('recipe.create_recipe') }}{% endif %}" method="POST">
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-semibold">食譜名稱 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title" placeholder="例如：台式紅燒肉" value="{{ recipe.title if recipe else '' }}" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-semibold">簡介 (可選)</label>
+                        <textarea class="form-control" id="description" name="description" rows="2" placeholder="簡短描述這道菜的特色或背後的故事...">{{ recipe.description if recipe else '' }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="ingredients" class="form-label fw-semibold">食材清單 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="ingredients" name="ingredients" rows="4" placeholder="每行一項食材，例如：&#10;豬五花 600g&#10;醬油 3大匙" required>{{ recipe.ingredients if recipe else '' }}</textarea>
+                        <div class="form-text">提示：每項食材請換行輸入。</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="steps" class="form-label fw-semibold">烹飪步驟 <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="steps" name="steps" rows="6" placeholder="分行或分段描述步驟，例如：&#10;1. 先將五花肉切塊汆燙。&#10;2. 起油鍋，爆香薑片與蒜頭。" required>{{ recipe.steps if recipe else '' }}</textarea>
+                        <div class="form-text">提示：詳細的步驟能幫助你未來更容易重現好味道。</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                        <a href="{{ url_for('recipe.index') }}" class="btn btn-light px-4">取消</a>
+                        <button type="submit" class="btn btn-primary px-5 fw-bold">
+                            {% if recipe and recipe.id %}儲存變更{% else %}發布食譜{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

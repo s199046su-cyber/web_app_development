@@ -1,0 +1,68 @@
+/* Custom Styles for Recipe Management System */
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #2d3436;
+}
+
+/* Navbar Tuning */
+.navbar {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    letter-spacing: -0.5px;
+}
+
+/* Card Hover Effects */
+.hover-shadow {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Step Numbers */
+.step-number {
+    width: 32px;
+    height: 32px;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* Form Styling */
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    border-color: #0d6efd;
+}
+
+/* Transitions */
+.transition {
+    transition: all 0.2s ease-in-out;
+}
+
+/* rounded-4 support for older bootstrap if needed */
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+/* Custom classes for spacing and typography */
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.list-unstyled li {
+    padding: 0.25rem 0;
+}
